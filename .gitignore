@@ -44,6 +44,3 @@ yarn-error.log*
 runLocal.bat
 runLocal.sh
 runProd.bat
-
-# Cursor
-.cursor

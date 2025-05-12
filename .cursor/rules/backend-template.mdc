@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+El proyecto actual es un proyecto de Node.js con TypeScript y TypeORM.
+La base de datos es PostgreSQL.
+El proyecto se encuentra en el directorio src.
+El archivo principal es el archivo index.ts.
+El archivo de conexión a la base de datos es el archivo database.ts.
+El archivo de configuración de la aplicación es el archivo config.ts.
+La capa de controllers utiliza el framework Hapi.js.
+
+El proyecto sigue la siguiente estructura de directorios:
+
+src/
+├── controllers/
+│   ├── objectiveController.ts
+│   ├── objectiveEvaluation.ts
+│   └── processController.ts
+├── entities/
+│   ├── objectiveEntity.ts
+│   └── processEntity.ts
+├── middleware/
+├── repository/
+├── impl/
+├── models/
+│   ├── objectiveEvaluation.ts
+│   ├── objectiveRepository.ts
+│   └── processRepository.ts
+├── routes/
+├── services/
+├── impl/
+│   ├── objectiveEvaluation.ts
+│   ├── objectiveService.ts
+│   └── processService.ts
+├── utils/
+└── index.ts
