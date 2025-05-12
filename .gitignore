@@ -1,0 +1,49 @@
+# Carpeta node_modules
+node_modules/
+
+# Archivo de bloqueo de paquetes
+package-lock.json
+
+# Archivos de registro y archivos temporales
+logs/
+*.log
+*.swp
+*.swo
+*.tmp
+
+# Archivos compilados
+dist/
+
+# Dependencias de desarrollo
+dev/
+
+# Archivos de caché
+.cache/
+
+# Dependencias de Bower
+bower_components/
+
+# Cobertura
+coverage/
+
+# Resultado de pruebas unitarias
+test-result
+
+# Dependencias de NPM
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# VSCode related files #
+.vscode/
+
+# Env file
+.env
+
+# Iniciadores locales
+runLocal.bat
+runLocal.sh
+runProd.bat
+
+# Cursor
+.cursor

@@ -1,0 +1,6 @@
+node_modules
+.env
+.cursorrules
+.cursorignore
+.gitignore
+package-lock.json
