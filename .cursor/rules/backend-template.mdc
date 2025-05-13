@@ -3,36 +3,92 @@ description:
 globs: 
 alwaysApply: true
 ---
-El proyecto actual es un proyecto de Node.js con TypeScript y TypeORM.
-La base de datos es PostgreSQL.
-El proyecto se encuentra en el directorio src.
-El archivo principal es el archivo index.ts.
-El archivo de conexión a la base de datos es el archivo database.ts.
-El archivo de configuración de la aplicación es el archivo config.ts.
-La capa de controllers utiliza el framework Hapi.js.
+# Consideraciones
+
+- El proyecto actual es un proyecto de Node.js con TypeScript y TypeORM.
+- La base de datos es PostgreSQL.
+- El proyecto se encuentra en el directorio src.
+- El archivo principal es el archivo index.ts.
+- El archivo de conexión a la base de datos es el archivo database.ts.
+- El archivo de configuración de la aplicación es el archivo config.ts.
+- La capa de controllers utiliza el framework Hapi.js.
+- No agregues comentarios extensos al código.
+
+# Estructura de directorios
 
 El proyecto sigue la siguiente estructura de directorios:
 
 src/
+├── routes/
+│   ├── objectiveRoute.ts
+│   ├── objectiveEvaluationRoutes.ts
+│   └── processRoutes.ts
 ├── controllers/
 │   ├── objectiveController.ts
-│   ├── objectiveEvaluation.ts
+│   ├── objectiveEvaluationController.ts
 │   └── processController.ts
 ├── entities/
 │   ├── objectiveEntity.ts
 │   └── processEntity.ts
-├── middleware/
-├── repository/
-├── impl/
-├── models/
-│   ├── objectiveEvaluation.ts
-│   ├── objectiveRepository.ts
-│   └── processRepository.ts
-├── routes/
 ├── services/
-├── impl/
-│   ├── objectiveEvaluation.ts
+│   ├── impl/
 │   ├── objectiveService.ts
+│   ├── objectiveEvaluationService.ts
 │   └── processService.ts
+├── repository/
+│   ├── models/
+│   ├── impl/
+│   ├── objectiveRepository.ts
+│   ├── objectiveEvaluationRepository.ts
+│   └── processRepository.ts
 ├── utils/
+│   ├── environment.ts
+│   ├── database.ts
+│   └── logger.ts
+├── middleware/
+│   └── context.ts
 └── index.ts
+
+# Organización del proyecto:
+
+- src/: Es el directorio raíz que contiene todo el código fuente de la aplicación Node.js escrita en TypeScript.
+
+- routes/: Aquí se definen las rutas (endpoints) de la API utilizando el framework Hapi.js. Cada archivo (ej: objectiveRoute.ts) agrupa las rutas relacionadas con una entidad o funcionalidad específica y las asocia con las funciones controladoras correspondientes.
+
+- controllers/: Contiene los controladores. Cada controlador (ej: objectiveController.ts) es responsable de manejar las solicitudes HTTP entrantes para un conjunto específico de rutas. Reciben la solicitud, validan datos (si es necesario), llaman a los servicios apropiados para ejecutar la lógica de negocio y finalmente, formulan y envían la respuesta HTTP.
+
+- entities/: Este directorio contiene interfaces TypeScript. Estas interfaces definen la estructura de los datos que se utilizan en diferentes partes de la aplicación, especialmente para: Validar y tipar los datos de las solicitudes (requests) entrantes a la API, Definir la forma de las respuestas (responses) que la API devuelve, Especificar la estructura de los datos necesarios para operaciones específicas, como las actualizaciones.
+
+- services/: Alberga la lógica de negocio principal de la aplicación. Sigue un patrón de diseño basado en interfaces e implementaciones para promover la modularidad y testeabilidad:
+    - Archivos raíz (objectiveService.ts, etc.): Definen las interfaces (contratos) que especifican qué operaciones debe realizar cada servicio.
+    - impl/: Contiene las implementaciones concretas de las interfaces definidas en la raíz de services/. Aquí es donde reside la lógica de negocio detallada.
+
+- repository/: Encapsula toda la lógica de acceso a datos. Se comunica directamente con la base de datos (a través de TypeORM) para realizar operaciones CRUD (Crear, Leer, Actualizar, Borrar). También sigue un patrón de interfaz/implementación:
+    - Archivos raíz (objectiveRepository.ts, etc.): Definen las interfaces que especifican las operaciones de acceso a datos necesarias para cada entidad.
+    - impl/: Contiene las implementaciones concretas de las interfaces de repositorio, utilizando los métodos proporcionados por TypeORM (Repository, EntityManager, etc.) para interactuar con la base de datos.
+    - models/: Modelos específicos para la capa de repositorio.
+
+- utils/: Directorio para utilidades transversales a la aplicación:
+    - database.ts: Configuración y lógica para establecer la conexión a la base de datos PostgreSQL usando TypeORM.
+    - environment.ts: Manejo de variables de entorno.
+    - logger.ts: Configuración del sistema de logging.
+
+- middleware/: Contiene middleware para Hapi.js. Estas son funciones que se ejecutan antes o después de los manejadores de ruta, útiles para tareas como la autenticación, autorización, logging de solicitudes, o añadir contexto a las peticiones (como en context.ts).
+
+- index.ts: Es el punto de entrada principal de la aplicación. Se encarga de inicializar y configurar el servidor Hapi.js, establecer la conexión a la base de datos, registrar las rutas y middlewares, y poner en marcha el servidor para escuchar las solicitudes entrantes.
+Esta estructura sigue principios de diseño comunes como la separación de responsabilidades (Separation of Concerns) y la inversión de dependencias (Dependency Inversion), lo que facilita el mantenimiento, la escalabilidad y las pruebas de la aplicación.
+
+# Ejemplos
+
+## Ejemplo de la definición de una ruta en la carpeta /routes:
+
+javascript
+```
+export const objectiveEvaluationRoutes = (server: Server) => {
+  server.route({
+    method: 'POST',
+    path: '/v1/gdh/objective-evaluation/create',
+    handler: createObjectiveEvaluation
+  });
+};
+```
