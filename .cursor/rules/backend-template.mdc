@@ -31,13 +31,11 @@ src/
 │   ├── objectiveEntity.ts
 │   └── processEntity.ts
 ├── services/
-│   ├── impl/
 │   ├── objectiveService.ts
 │   ├── objectiveEvaluationService.ts
 │   └── processService.ts
 ├── repository/
 │   ├── models/
-│   ├── impl/
 │   ├── objectiveRepository.ts
 │   ├── objectiveEvaluationRepository.ts
 │   └── processRepository.ts
@@ -60,12 +58,10 @@ src/
 - entities/: Este directorio contiene interfaces TypeScript. Estas interfaces definen la estructura de los datos que se utilizan en diferentes partes de la aplicación, especialmente para: Validar y tipar los datos de las solicitudes (requests) entrantes a la API, Definir la forma de las respuestas (responses) que la API devuelve, Especificar la estructura de los datos necesarios para operaciones específicas, como las actualizaciones.
 
 - services/: Alberga la lógica de negocio principal de la aplicación. Sigue un patrón de diseño basado en interfaces e implementaciones para promover la modularidad y testeabilidad:
-    - Archivos raíz (objectiveService.ts, etc.): Definen las interfaces (contratos) que especifican qué operaciones debe realizar cada servicio.
-    - impl/: Contiene las implementaciones concretas de las interfaces definidas en la raíz de services/. Aquí es donde reside la lógica de negocio detallada.
+    - Archivos raíz (objectiveService.ts, etc.): Aquí es donde reside la lógica de negocio detallada.
 
 - repository/: Encapsula toda la lógica de acceso a datos. Se comunica directamente con la base de datos (a través de TypeORM) para realizar operaciones CRUD (Crear, Leer, Actualizar, Borrar). También sigue un patrón de interfaz/implementación:
-    - Archivos raíz (objectiveRepository.ts, etc.): Definen las interfaces que especifican las operaciones de acceso a datos necesarias para cada entidad.
-    - impl/: Contiene las implementaciones concretas de las interfaces de repositorio, utilizando los métodos proporcionados por TypeORM (Repository, EntityManager, etc.) para interactuar con la base de datos.
+    - Archivos raíz (objectiveRepository.ts, etc.): Contiene las implementaciones concretas de las interfaces de repositorio, utilizando los métodos proporcionados por TypeORM (Repository, EntityManager, etc.) para interactuar con la base de datos.
     - models/: Modelos específicos para la capa de repositorio.
 
 - utils/: Directorio para utilidades transversales a la aplicación:
@@ -91,4 +87,57 @@ export const objectiveEvaluationRoutes = (server: Server) => {
     handler: createObjectiveEvaluation
   });
 };
+```
+
+# Datos de ejemplo
+
+- Tabla collaborators
+
+table
+```
+id  user_id position    area    document_number active  name    joining_date    have_successor  email
+1	101	Manager	HR	DOC001	true	Alice Smith	2021-01-10 09:00:00	true	alice.smith@example.com
+2	102	Analyst	Finance	DOC002	true	Bob Johnson	2022-03-15 08:30:00	false	bob.johnson@example.com
+3	103	Engineer	IT	DOC003	false	Carlos Rivera	2020-06-01 10:15:00	false	carlos.rivera@example.com
+```
+
+- Tabla collaborators
+
+table
+```
+id  lead_id successor_id    created_at  active
+1	1	2	2023-07-01 12:00:00	true
+2	2	3	2023-08-05 14:45:00	true
+3	2	4	2025-05-12 18:06:27	false
+4	1	4	2025-05-12 18:07:34	true
+```
+
+- Tabla processes
+
+table
+```
+id  process_type    process_name    process_start   process_end created_at  created_by  updated_at  updated_by
+1	1	Quarterly Review	2024-01-01 00:00:00	2024-03-31 23:59:59	2023-12-01 09:00:00	admin	2024-01-05 10:00:00	admin
+2	2	Annual Evaluation	2024-07-23 05:00:00	2024-07-23 07:30:00	2023-12-01 09:30:00	hr_user	2025-04-21 18:06:57	hr_user
+6	2	Proceso de Trimestre 3Q	2024-07-23 05:00:00	2024-07-23 07:30:00	2025-04-21 17:59:06	juan.perez	2025-04-23 11:22:12	juan.perez
+```
+
+- Tabla objectives
+
+table
+```
+id process_id objective_type_id metric_type_id metric_min metric_max owner created_at created_by updated_at updated_by
+1	1	1	5	50	95	usuario.ejemplo	2025-04-23 12:55:41	usuario.ejemplo	2025-04-23 12:55:58	testuser_update
+2	1	1	5	10	100	bob.johnson@example.com	2025-04-23 14:52:08	bob.johnson@example.com		
+3	1	1	1	0	100	dylan.delgado@interseguro.com.pe	2025-04-23 16:15:10	dylan.delgado@interseguro.com.pe		
+7	1	1	5	10	100	alice.smith@example.com	2025-05-09 16:44:20	alice.smith@example.com		
+```
+
+- Tabla evaluations
+
+table
+```
+id process_id objective_type_id metric_type_id metric_min metric_max owner created_at created_by updated_at updated_by
+5	3	true	2025-04-23 16:33:50	dylan.delgado@interseguro.com.pe	99.0
+8	2	false	2025-05-09 16:48:08	alice.smith@example.com	100.0
 ```

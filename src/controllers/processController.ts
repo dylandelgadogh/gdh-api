@@ -4,7 +4,6 @@ import { getLogger } from '../utils/logger';
 import { Context, ContextRequestApplicationState } from '../middleware/context';
 import { ProcessRequest } from '../entities/processEntity';
 import { ProcessService } from '../services/processService';
-import { ProcessServiceImpl } from '../services/impl/processServiceImpl';
 import { ProcessModel } from '../repository/models/processModel';
 
 // Definición de las funciones controller
@@ -13,7 +12,7 @@ export const createProcess = async (request: Request, h: ResponseToolkit) => {
     const ctx = getContext(request);    
     getLogger(ctx).debug("Inicio del metodo createProcess");
     try {
-        const processService: ProcessService = new ProcessServiceImpl(ctx);
+        const processService = new ProcessService(ctx);
         const processRequest: ProcessRequest = request.payload as ProcessRequest;
         
         // Convertir process_type a número
@@ -48,7 +47,7 @@ export const listProcesses = async (request: Request, h: ResponseToolkit) => {
     const ctx = getContext(request);    
     getLogger(ctx).debug("Inicio del metodo listProcesses");
     try {
-        const processService: ProcessService = new ProcessServiceImpl(ctx);
+        const processService = new ProcessService(ctx);
         const processes = await processService.listProcesses();
         return h.response({"data": processes, "status": "OK"}).code(200);
     } catch(error: any) {
@@ -66,7 +65,7 @@ export const updateProcessDates = async (request: Request, h: ResponseToolkit) =
     const ctx = getContext(request);    
     getLogger(ctx).debug("Inicio del metodo updateProcessDates");
     try {
-        const processService: ProcessService = new ProcessServiceImpl(ctx);
+        const processService = new ProcessService(ctx);
         // Obtener el ID de los parámetros de la ruta
         const id = parseInt(request.params.id, 10);
 

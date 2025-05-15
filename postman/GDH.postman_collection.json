@@ -1,0 +1,357 @@
+{
+	"info": {
+		"_postman_id": "100d527b-3ebe-4778-b37e-24714dd71be4",
+		"name": "GDH",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19677142"
+	},
+	"item": [
+		{
+			"name": "Process",
+			"item": [
+				{
+					"name": "Create Process",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"process_name\": \"Proceso de Lanzamiento Producto X\",\r\n    \"process_type\": \"2\",\r\n    \"created_by\": \"juan.perez\",\r\n    \"process_start\": \"2024-08-01T10:00:00Z\",\r\n    \"process_end\": \"2024-09-30T17:00:00Z\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/process/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"process",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Process",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/process/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"process",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Process",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 6,\r\n  \"process_start\": \"2024-07-23T10:00:00.000Z\",\r\n  \"process_end\": \"2024-07-23T12:30:00.000Z\",\r\n  \"updated_by\": \"juan.perez\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/process/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"process",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Objective",
+			"item": [
+				{
+					"name": "Create Objective",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"process_id\": 1,\r\n  \"objective_type_id\": 1,\r\n  \"metric_type_id\": 5,\r\n  \"metric_min\": 10,\r\n  \"metric_max\": 100,\r\n  \"owner\": \"usuario.ejemplo\",\r\n  \"created_by\": \"usuario.ejemplo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/objective/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"objective",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Objective",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"process_id\": 1,\r\n    \"metric_min\": 50,\r\n    \"metric_max\": 95,\r\n    \"updated_by\": \"testuser_update\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/objective/update/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"objective",
+								"update",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Objective",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/objective/delete/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"objective",
+								"delete",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Objetivos Personales",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/objective/owner/bob.johnson@example.com?processId=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"objective",
+								"owner",
+								"bob.johnson@example.com"
+							],
+							"query": [
+								{
+									"key": "processId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lider - Listar Objetivos de Sucesores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/objective/owner/alice.smith@example.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"objective",
+								"owner",
+								"alice.smith@example.com"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Evaluation",
+			"item": [
+				{
+					"name": "Create evaluation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"objective_id\": 123,\r\n  \"evaluated_by\": \"user_guid_or_id\",\r\n  \"score\": 85.5,\r\n  \"comments\": \"El objetivo se cumplió parcialmente. Se requiere seguimiento en el próximo ciclo.\",\r\n  \"evidence_details\": \"Reporte adjunto en JIRA-456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/objective-evaluation/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"objective-evaluation",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Collaborator",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"position\": \"Desarrollador Backend\",\r\n  \"area\": \"Tecnología\",\r\n  \"document_number\": \"12345678X\",\r\n  \"active\": true,\r\n  \"name\": \"Juan Pérez\",\r\n  \"joining_date\": \"2024-01-15T10:00:00.000Z\",\r\n  \"have_successor\": false,\r\n  \"email\": \"juan.perez@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/collaborator/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"collaborator",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Lead",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"position\": \"Desarrollador Backend\",\r\n  \"area\": \"Tecnología\",\r\n  \"document_number\": \"12345678X\",\r\n  \"active\": true,\r\n  \"name\": \"Juan Pérez\",\r\n  \"joining_date\": \"2024-01-15T10:00:00.000Z\",\r\n  \"have_successor\": false,\r\n  \"email\": \"juan.perez@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/gdh/collaborator/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"gdh",
+								"collaborator",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -4,7 +4,6 @@ import { getLogger } from '../utils/logger';
 import { Context, ContextRequestApplicationState } from '../middleware/context';
 import { ObjectiveRequest, ObjectiveUpdateRequest } from '../entities/objectiveEntity'; // Importa la interfaz de request
 import { ObjectiveService } from '../services/objectiveService';
-import { ObjectiveServiceImpl } from '../services/impl/objectiveServiceImpl';
 import { ObjectiveModel } from '../repository/models/objectiveModel';
 
 // Definición de las funciones controller
@@ -13,7 +12,7 @@ export const createObjective = async (request: Request, h: ResponseToolkit) => {
     const ctx = getContext(request);
     getLogger(ctx).debug("Inicio del metodo createObjective");
     try {
-        const objectiveService: ObjectiveService = new ObjectiveServiceImpl(ctx);
+        const objectiveService = new ObjectiveService(ctx);
         const objectiveRequest: ObjectiveRequest = request.payload as ObjectiveRequest;
 
         // Validación básica del payload (puedes añadir más validaciones según sea necesario)
@@ -62,7 +61,7 @@ export const updateObjective = async (request: Request, h: ResponseToolkit) => {
     }
 
     try {
-        const objectiveService: ObjectiveService = new ObjectiveServiceImpl(ctx);
+        const objectiveService = new ObjectiveService(ctx);
         const objectiveRequest: ObjectiveUpdateRequest = request.payload as ObjectiveUpdateRequest;
 
         // Validación básica del payload
@@ -117,7 +116,7 @@ export const deleteObjective = async (request: Request, h: ResponseToolkit) => {
     }
 
     try {
-        const objectiveService: ObjectiveService = new ObjectiveServiceImpl(ctx);
+        const objectiveService = new ObjectiveService(ctx);
         const wasDeleted = await objectiveService.deleteObjective(objectiveId);
 
         if (wasDeleted) {
@@ -146,7 +145,7 @@ export const findObjectivesByOwner = async (request: Request, h: ResponseToolkit
     }
 
     try {
-        const objectiveService: ObjectiveService = new ObjectiveServiceImpl(ctx);
+        const objectiveService = new ObjectiveService(ctx);
         const objectives = await objectiveService.findObjectivesByOwner(owner);
 
         getLogger(ctx).info(`Encontrados ${objectives.length} objetivos para el owner ${owner}`);
@@ -175,7 +174,7 @@ export const findObjectivesByCollaborator = async (request: Request, h: Response
     }
 
     try {
-        const objectiveService: ObjectiveService = new ObjectiveServiceImpl(ctx);
+        const objectiveService = new ObjectiveService(ctx);
         const objectives = await objectiveService.findObjectivesByCollaboratorLead(collaboratorEmail);
 
         getLogger(ctx).info(`Encontrados ${objectives.length} objetivos para ${collaboratorEmail}`);

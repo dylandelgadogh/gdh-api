@@ -3,7 +3,6 @@ import * as Boom from '@hapi/boom';
 import { getLogger } from '../utils/logger';
 import { Context, ContextRequestApplicationState } from '../middleware/context';
 import { ObjectiveEvaluationService } from '../services/objectiveEvaluationService';
-import { ObjectiveEvaluationServiceImpl } from '../services/impl/objectiveEvaluationServiceImpl';
 import { ObjectiveEvaluationModel } from '../repository/models/objectiveEvaluationModel';
 
 // Función para obtener el contexto de la solicitud
@@ -15,7 +14,7 @@ export const createObjectiveEvaluation = async (request: Request, h: ResponseToo
     const ctx = getContext(request);
     getLogger(ctx).debug("Inicio del metodo createObjectiveEvaluation");
     try {
-        const evaluationService: ObjectiveEvaluationService = new ObjectiveEvaluationServiceImpl(ctx);
+        const evaluationService = new ObjectiveEvaluationService(ctx);
         const evaluationRequestData: Partial<ObjectiveEvaluationModel> = request.payload as Partial<ObjectiveEvaluationModel>;
 
         if (!evaluationRequestData.objective_id || !evaluationRequestData.evaluated_by || evaluationRequestData.score === undefined || evaluationRequestData.score === null) {
