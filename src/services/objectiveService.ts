@@ -16,6 +16,22 @@ export class ObjectiveService {
     async createObjective(objectiveData: Partial<ObjectiveModel>): Promise<ObjectiveModel> {
         getLogger(this.context).debug(`Inicio del metodo de servicio createObjective, objectiveData: ${JSON.stringify(objectiveData)}`);
         try {
+            const owner = objectiveData.owner;
+            const processId = objectiveData.process_id;
+
+            if (!owner || typeof processId !== 'number') {
+                getLogger(this.context).warn(`Owner o process_id no proporcionados o inválidos para la validación del límite de objetivos. Owner: ${owner}, Process ID: ${processId}`);
+                throw new Error('Owner y process_id son requeridos para validar el límite de objetivos.');
+            }
+
+            const existingObjectives = await this.objectiveRepository.findObjectivesByOwner(owner, processId);
+            const MAX_OBJECTIVES_LIMIT = 5;
+
+            if (existingObjectives.length >= MAX_OBJECTIVES_LIMIT) {
+                getLogger(this.context).warn(`Se alcanzó el límite de ${MAX_OBJECTIVES_LIMIT} objetivos para el owner ${owner} en el process_id ${processId}.`);
+                throw new Error(`Límite de ${MAX_OBJECTIVES_LIMIT} objetivos alcanzado para el owner '${owner}' en el proceso ID ${processId}.`);
+            }
+
             const objective = await this.objectiveRepository.createObjective({
                 process_id: objectiveData.process_id,
                 objective_type_id: objectiveData.objective_type_id,
@@ -28,7 +44,7 @@ export class ObjectiveService {
             return objective;
         } catch (error) {
             getLogger(this.context).error(`Error creating objective in service: ${error}`);
-            throw new Error('Error creating objective');
+            throw error;
         }
     }
 
@@ -61,11 +77,11 @@ export class ObjectiveService {
         }
     }
 
-    async findObjectivesByOwner(owner: string): Promise<ObjectiveModel[]> {
-        getLogger(this.context).debug(`Inicio del metodo de servicio findObjectivesByOwner, owner: ${owner}`);
+    async findObjectivesByOwner(owner: string, processId?: number): Promise<ObjectiveModel[]> {
+        getLogger(this.context).debug(`Inicio del metodo de servicio findObjectivesByOwner, owner: ${owner}${processId ? `, processId: ${processId}` : ''}`);
         try {
-            const objectives = await this.objectiveRepository.findObjectivesByOwner(owner);
-            getLogger(this.context).info(`Service found ${objectives.length} objectives for owner ${owner}`);
+            const objectives = await this.objectiveRepository.findObjectivesByOwner(owner, processId);
+            getLogger(this.context).info(`Service found ${objectives.length} objectives for owner ${owner}${processId ? ` and processId: ${processId}` : ''}`);
             return objectives;
         } catch (error) {
             getLogger(this.context).error(`Error finding objectives by owner in service: ${error}`);
@@ -73,11 +89,11 @@ export class ObjectiveService {
         }
     }
 
-    async findObjectivesByCollaboratorLead(collaboratorEmail: string): Promise<ObjectiveModel[]> {
-        getLogger(this.context).debug(`Inicio del metodo de servicio findObjectivesByCollaborator, collaboratorEmail: ${collaboratorEmail}`);
+    async findObjectivesByCollaboratorLead(collaboratorEmail: string, processId?: number): Promise<ObjectiveModel[]> {
+        getLogger(this.context).debug(`Inicio del metodo de servicio findObjectivesByCollaborator, collaboratorEmail: ${collaboratorEmail}${processId ? `, processId: ${processId}` : ''}`);
         try {
-            const objectives = await this.objectiveRepository.findObjectivesByCollaboratorLead(collaboratorEmail);
-            getLogger(this.context).info(`Service found ${objectives.length} objectives for collaborator ${collaboratorEmail}`);
+            const objectives = await this.objectiveRepository.findObjectivesByCollaboratorLead(collaboratorEmail, processId);
+            getLogger(this.context).info(`Service found ${objectives.length} objectives for collaborator ${collaboratorEmail}${processId ? ` and processId: ${processId}` : ''}`);
             return objectives;
         } catch (error) {
             getLogger(this.context).error(`Error finding objectives by collaborator in service: ${error}`);

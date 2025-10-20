@@ -4,7 +4,7 @@ import { ProcessModel } from '../repository/models/processModel';
 import { ObjectiveModel } from '../repository/models/objectiveModel';
 import { ObjectiveEvaluationModel } from '../repository/models/objectiveEvaluationModel';
 import { CollaboratorModel } from '../repository/models/collaboratorModel';
-
+import { DirectoryAssigmentModel } from '../repository/models/directoryAssigmentModel';
 export const dataSource = new DataSource({
     type: "postgres",
     host: DATABASE_HOST,
@@ -12,7 +12,7 @@ export const dataSource = new DataSource({
     username: DATABASE_USER,
     password: DATABASE_PASSWORD,
     database: DATABASE_NAME,
-    entities: [ProcessModel, ObjectiveModel, ObjectiveEvaluationModel, CollaboratorModel],
+    entities: [ProcessModel, ObjectiveModel, ObjectiveEvaluationModel, CollaboratorModel, DirectoryAssigmentModel],
     synchronize: false,
     logging: LOG_LEVEL as LoggerOptions,
 });
