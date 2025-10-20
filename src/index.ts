@@ -15,6 +15,8 @@ import { HealthPlugin } from 'hapi-k8s-health'
 import { connectToDatabase } from "./utils/database";
 import { objectiveRoutes } from './routes/objectiveRoute';
 import { objectiveEvaluationRoutes } from './routes/objectiveEvaluationRoutes';
+import { collaboratorRoutes } from './routes/collaboratorRoute';
+import { directoryAssigmentRoutes } from './routes/directoryAssigmentRoute';
 
 const init = async () => {
   const server = Hapi.server({
@@ -52,6 +54,8 @@ const init = async () => {
   processRoutes(server);
   objectiveRoutes(server);
   objectiveEvaluationRoutes(server);
+  collaboratorRoutes(server);
+  directoryAssigmentRoutes(server);
   // Inicia el servidor
   await server.start();
   console.info(`[gdh-api] Server running on ${server.info.uri}`);

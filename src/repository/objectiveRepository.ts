@@ -74,27 +74,30 @@ export class PgObjectiveRepository {
         }
     }
 
-    async findObjectivesByOwner(owner: string): Promise<ObjectiveModel[]> {
-        getLogger(this.context).debug(`inicio del metodo findObjectivesByOwner usando relacion con Evaluations: owner ${owner}`);
+    async findObjectivesByOwner(owner: string, processId?: number): Promise<ObjectiveModel[]> {
+        getLogger(this.context).debug(`inicio del metodo findObjectivesByOwner usando relacion con Evaluations: owner ${owner}${processId ? `, processId: ${processId}` : ''}`);
         try {
-            const objectives = await this.objectiveRepository.createQueryBuilder("objective")
-                // Usar la relación definida en ObjectiveModel
-                 .leftJoinAndSelect("objective.evaluations", "evaluation") // Ahora TypeORM usa la relación 'evaluations'
-                .where("objective.owner = :owner", { owner: owner })
-                .getMany();
+            const query = this.objectiveRepository.createQueryBuilder("objective")
+                .leftJoinAndSelect("objective.evaluations", "evaluation")
+                .where("objective.owner = :owner", { owner: owner });
 
-            getLogger(this.context).info(`Encontrados ${objectives.length} objetivos (con evaluaciones) para el owner ${owner}`);
+            if (typeof processId === 'number') {
+                query.andWhere("objective.process_id = :processId", { processId });
+            }
+
+            const objectives = await query.getMany();
+
+            getLogger(this.context).info(`Encontrados ${objectives.length} objetivos (con evaluaciones) para el owner ${owner}${processId ? ` y processId: ${processId}` : ''}`);
             return objectives;
         } catch (error) {
             getLogger(this.context).error(`error en findObjectivesByOwner usando relacion: ${error}`);
-            throw error; // El error ahora podría indicar problemas con la definición de la relación
+            throw error;
         }
     }
 
-    async findObjectivesByCollaboratorLead(collaboratorEmail: string): Promise<ObjectiveModel[]> {
-        getLogger(this.context).debug(`inicio del metodo findObjectivesByCollaborator: collaboratorEmail ${collaboratorEmail}`);
+    async findObjectivesByCollaboratorLead(collaboratorEmail: string, processId?: number): Promise<ObjectiveModel[]> {
+        getLogger(this.context).debug(`inicio del metodo findObjectivesByCollaborator: collaboratorEmail ${collaboratorEmail}${processId ? `, processId: ${processId}` : ''}`);
         try {
-            // 1. Buscar email del colaborador
             const collaborator = await this.collaboratorRepository.findOne({
                 select: ["id"],
                 where: { email: collaboratorEmail }
@@ -102,47 +105,50 @@ export class PgObjectiveRepository {
 
             if (!collaborator || !collaborator.id) {
                 getLogger(this.context).warn(`Colaborador con email ${collaboratorEmail} no encontrado o sin id.`);
-                return []; // Si no se encuentra el colaborador o no tiene email, devolver vacío
+                return [];
             }
 
-            // 2. Buscar IDs de los leads del colaborador (usando subconsulta o query builder)
-            // Usaremos una subconsulta para obtener los successor_id directamente
             const assignmentsSubQuery = dataSource.createQueryBuilder()
                 .select("da.successor_id", "successor_id")
-                .from("gdh.directory_assigments", "da") // Asegúrate que el nombre de la tabla es correcto
+                .from("gdh.directory_assigments", "da")
                 .where("da.lead_id = :collaboratorId", { collaboratorId: collaborator.id })
-                .andWhere("da.active = true"); // Considerar solo asignaciones activas
+                .andWhere("da.active = true");
 
-             // Ejecutar la subconsulta para obtener los IDs
             const successorIdsResult = await assignmentsSubQuery.getRawMany<{ successor_id: number }>();
             const successorIds = successorIdsResult.map(item => item.successor_id);
             getLogger(this.context).debug(`IDs de sucesores para el colaborador ${collaboratorEmail}: ${JSON.stringify(successorIds)}`);
 
             let emailsToSearch: string[] = [];
 
-            // 3. Buscar emails de los sucesores si existen
             if (successorIds.length > 0) {
                 const successors = await this.collaboratorRepository.find({
                     select: ["email"],
-                    where: { id: In(successorIds) } // Usar operador In
+                    where: { id: In(successorIds) }
                 });
-                const successorEmails = successors.map(successor => successor.email).filter((email): email is string => !!email); // Filtrar nulos/undefined
+                const successorEmails = successors.map(successor => successor.email).filter((email): email is string => !!email);
                 getLogger(this.context).debug(`Emails de sucesores para el colaborador ${collaboratorEmail}: ${JSON.stringify(successorEmails)}`);
                 emailsToSearch = [...emailsToSearch, ...successorEmails];
             }
 
-            // Eliminar duplicados por si el colaborador es lead de sí mismo o hay emails repetidos
             emailsToSearch = [...new Set(emailsToSearch)];
             getLogger(this.context).debug(`Emails finales para la búsqueda de objetivos: ${JSON.stringify(emailsToSearch)}`);
 
-            // 4. Buscar objetivos donde owner esté en la lista de emails
-            const objectives = await this.objectiveRepository.createQueryBuilder("objective")
-                // Usar la relación definida en ObjectiveModel
-                 .leftJoinAndSelect("objective.evaluations", "evaluation") // Ahora TypeORM usa la relación 'evaluations'
-                .where("objective.owner IN (:...emails)", { emails: emailsToSearch })
-                .getMany();
+            if (emailsToSearch.length === 0) {
+                getLogger(this.context).info(`No se encontraron sucesores activos para ${collaboratorEmail}, devolviendo 0 objetivos.`);
+                return [];
+            }
 
-            getLogger(this.context).info(`Encontrados ${objectives.length} objetivos para el colaborador ${collaboratorEmail} y sus sucesores.`);
+            const query = this.objectiveRepository.createQueryBuilder("objective")
+                .leftJoinAndSelect("objective.evaluations", "evaluation")
+                .where("objective.owner IN (:...emails)", { emails: emailsToSearch });
+
+            if (typeof processId === 'number') {
+                query.andWhere("objective.process_id = :processId", { processId });
+            }
+
+            const objectives = await query.getMany();
+
+            getLogger(this.context).info(`Encontrados ${objectives.length} objetivos para el colaborador ${collaboratorEmail} y sus sucesores${processId ? ` y processId: ${processId}` : ''}`);
             return objectives;
 
         } catch (error) {

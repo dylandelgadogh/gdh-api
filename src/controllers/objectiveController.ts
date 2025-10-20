@@ -137,23 +137,35 @@ export const deleteObjective = async (request: Request, h: ResponseToolkit) => {
 export const findObjectivesByOwner = async (request: Request, h: ResponseToolkit) => {
     const ctx = getContext(request);
     const owner = request.params.owner as string; // Obtener owner de los parámetros de ruta
-    getLogger(ctx).debug(`Inicio del metodo findObjectivesByOwner para el owner: ${owner}`);
+    const { process_id } = request.query as { process_id?: string }; // Obtener process_id de los query params
+    let processIdNumber: number | undefined = undefined;
+
+    getLogger(ctx).debug(`Inicio del metodo findObjectivesByOwner para el owner: ${owner}${process_id ? ` y process_id: ${process_id}` : ''}`);
 
     if (!owner) {
         getLogger(ctx).warn("Owner no proporcionado en la ruta.");
         return Boom.badRequest('El owner es requerido.');
     }
 
+    if (process_id) {
+        processIdNumber = parseInt(process_id, 10);
+        if (isNaN(processIdNumber)) {
+            getLogger(ctx).warn(`El process_id '${process_id}' no es un número válido.`);
+            return Boom.badRequest('El process_id debe ser un número.');
+        }
+    }
+
     try {
         const objectiveService = new ObjectiveService(ctx);
-        const objectives = await objectiveService.findObjectivesByOwner(owner);
+        // Pasar processIdNumber al servicio (puede ser undefined)
+        const objectives = await objectiveService.findObjectivesByOwner(owner, processIdNumber);
 
-        getLogger(ctx).info(`Encontrados ${objectives.length} objetivos para el owner ${owner}`);
+        getLogger(ctx).info(`Encontrados ${objectives.length} objetivos para el owner ${owner}${processIdNumber ? ` y process_id: ${processIdNumber}` : ''}`);
         // Devolver los objetivos encontrados
         return h.response({ "data": objectives, "status": "OK" }).code(200);
 
     } catch (error: any) {
-        getLogger(ctx).error(`Error en findObjectivesByOwner controller para owner ${owner}: ${error}`);
+        getLogger(ctx).error(`Error en findObjectivesByOwner controller para owner ${owner}${processIdNumber ? ` y process_id: ${processIdNumber}` : ''}: ${error}`);
         // Manejar errores específicos si es necesario, de lo contrario, error genérico
         if (error instanceof Error && error.message.includes('finding objectives by owner')) {
              return Boom.internal("Error interno al buscar objetivos por owner.");
@@ -166,23 +178,35 @@ export const findObjectivesByCollaborator = async (request: Request, h: Response
     const ctx = getContext(request);
     // Asume que el ID viene como parámetro en la ruta, ej: /objective/collaborator/{id}
     const collaboratorEmail = request.params.email as string;
-    getLogger(ctx).debug(`Inicio del metodo findObjectivesByCollaborator para el collaboratorEmail: ${collaboratorEmail}`);
+    const { process_id } = request.query as { process_id?: string }; // Obtener process_id de los query params
+    let processIdNumber: number | undefined = undefined;
+
+    getLogger(ctx).debug(`Inicio del metodo findObjectivesByCollaborator para el collaboratorEmail: ${collaboratorEmail}${process_id ? ` y process_id: ${process_id}` : ''}`);
 
     if (!collaboratorEmail) {
         getLogger(ctx).warn("Email de colaborador inválido o no proporcionado en la ruta.");
         return Boom.badRequest('El email del colaborador es requerido.');
     }
 
+    if (process_id) {
+        processIdNumber = parseInt(process_id, 10);
+        if (isNaN(processIdNumber)) {
+            getLogger(ctx).warn(`El process_id '${process_id}' no es un número válido.`);
+            return Boom.badRequest('El process_id debe ser un número.');
+        }
+    }
+
     try {
         const objectiveService = new ObjectiveService(ctx);
-        const objectives = await objectiveService.findObjectivesByCollaboratorLead(collaboratorEmail);
+        // Pasar processIdNumber al servicio (puede ser undefined)
+        const objectives = await objectiveService.findObjectivesByCollaboratorLead(collaboratorEmail, processIdNumber);
 
-        getLogger(ctx).info(`Encontrados ${objectives.length} objetivos para ${collaboratorEmail}`);
+        getLogger(ctx).info(`Encontrados ${objectives.length} objetivos para ${collaboratorEmail}${processIdNumber ? ` y process_id: ${processIdNumber}` : ''}`);
         // Devolver los objetivos encontrados
         return h.response({ "data": objectives, "status": "OK" }).code(200);
 
     } catch (error: any) {
-        getLogger(ctx).error(`Error en findObjectivesByCollaborator controller para email ${collaboratorEmail}: ${error}`);
+        getLogger(ctx).error(`Error en findObjectivesByCollaborator controller para email ${collaboratorEmail}${processIdNumber ? ` y process_id: ${processIdNumber}` : ''}: ${error}`);
          // Manejar errores específicos si es necesario
         if (error instanceof Error && error.message.includes('finding objectives by collaborator')) {
              return Boom.internal("Error interno al buscar objetivos por colaborador.");

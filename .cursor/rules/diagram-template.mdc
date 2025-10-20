@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Por favor, genera un diagrama de estados de mi sistema en formato Mermaid usando `stateDiagram-v2`. Define los siguientes estados y sus transiciones:
+
+• Estados:
+  - EstadoInicial: “Inicio”
+  - EstadoIntermedio1: “Procesando”
+  - EstadoIntermedio2: “En Espera”
+  - EstadoFinal: “Completado”
+  - EstadoError: “Error”
+
+• Transiciones con condiciones:
+  - Inicio --> Procesando : “Solicitud válida”
+  - Procesando --> En Espera : “Requiere aprobación”
+  - En Espera --> Procesando : “Aprobado”
+  - Procesando --> Completado : “Tarea finalizada”
+  - Procesando --> Error : “Excepción”
+
+Incluye además:
+- Una sección `[*]` para el estado inicial y final.
+- Comentarios breves si lo consideras necesario.
+- Sintaxis exacta de `stateDiagram-v2`.
+
+Ejemplo de estructura de salida esperada:
+
+\`\`\`mermaid
+stateDiagram-v2
+    [*] --> Inicio
+    Inicio --> Procesando : Solicitud válida
+    Procesando --> En Espera : Requiere aprobación
+    En Espera --> Procesando : Aprobado
+    Procesando --> Completado : Tarea finalizada
+    Procesando --> Error : Excepción
+    Completado --> [*]
+    Error --> [*]
+\`\`\`
+
+Gracias.```
+
+— Puedes modificar la sección de “Estados” y “Transiciones” para reflejar tu diagrama específico.
+
