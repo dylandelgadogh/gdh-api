@@ -39,6 +39,7 @@ export class ProcessService {
         }
     }
 
+    // actualizar las fechas y/o el nombre de un proceso existente
     async updateProcessDates(processId: number, processName?: string, startDate?: Date, endDate?: Date, updatedBy?: string): Promise<ProcessModel> {
         getLogger(this.context).debug(`Inicio del metodo updateProcessDates, processId: ${processId}, processName: ${processName}, startDate: ${startDate}, endDate: ${endDate}, updatedBy: ${updatedBy}`);
         try {
